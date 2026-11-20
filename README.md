@@ -1,18 +1,17 @@
-# NVIDIA Jetson AGX Orin Edge AI System
+# Argus-EdgeAI: NVIDIA Jetson AGX Orin Edge AI Platform
 
-[![Platform](https://img.shields.io/badge/platform-Jetson%20AGX%20Orin-blue)](https://developer.nvidia.com/embedded/jetson-agx-orin)
-[![C++](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/)
-[![Python](https://img.shields.io/badge/Python-3.8+-green.svg)](https://www.python.org/)
-[![TensorRT](https://img.shields.io/badge/TensorRT-8.5+-purple.svg)](https://developer.nvidia.com/tensorrt)
-[![CUDA](https://img.shields.io/badge/CUDA-11.4+-orange.svg)](https://developer.nvidia.com/cuda-toolkit)
-[![OpenCV](https://img.shields.io/badge/OpenCV-4.8+-red.svg)](https://opencv.org/)
+[![Platform](https://img.shields.io/badge/platform-Jetson%20AGX%20Orin%2064GB-blue)](https://developer.nvidia.com/embedded/jetson-agx-orin)
+[![JetPack](https://img.shields.io/badge/JetPack-6.2.1%20%5BL4T%2036.4.7%5D-green)](https://developer.nvidia.com/embedded/jetpack)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20LTS-orange)](https://ubuntu.com/)
+[![CUDA](https://img.shields.io/badge/CUDA-12.6.68-76B900.svg)](https://developer.nvidia.com/cuda-toolkit)
+[![TensorRT](https://img.shields.io/badge/TensorRT-10.3.0.30-purple.svg)](https://developer.nvidia.com/tensorrt)
+[![OpenCV](https://img.shields.io/badge/OpenCV-4.10.0%20(CUDA%3A%20YES)-red.svg)](https://opencv.org/)
+[![cuDNN](https://img.shields.io/badge/cuDNN-9.3.0-blue.svg)](https://developer.nvidia.com/cudnn)
+[![VPI](https://img.shields.io/badge/VPI-3.2.4-blue.svg)](https://developer.nvidia.com/embedded/vpi)
+[![Python](https://img.shields.io/badge/Python-3.10-yellow.svg)](https://www.python.org/)
+[![C++](https://img.shields.io/badge/C%2B%2B-17%2F20-blue.svg)](https://isocpp.org/)
 [![MQTT](https://img.shields.io/badge/MQTT-5.0-yellow.svg)](https://mqtt.org/)
-[![WebSocket](https://img.shields.io/badge/WebSocket-13-blue.svg)](https://websockets.spec.whatwg.org/)
-[![REST API](https://img.shields.io/badge/REST-API-green.svg)](https://restfulapi.net/)
-[![Docker](https://img.shields.io/badge/Docker-24.0+-blue.svg)](https://www.docker.com/)
-[![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
-[![Coverage](https://img.shields.io/badge/coverage-85%25-green.svg)]()
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)]()
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
 
@@ -613,17 +612,18 @@ The **NVIDIA Jetson AGX Orin Edge AI System** is a comprehensive, production-rea
 │                         HARDWARE REQUIREMENTS                               │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  Component          │ Minimum Specification                                 │
+│  Component          │ Specification (Target Hardware: AGX Orin)             │
 │  ──────────────────────────────────────────────────────────────────────────  │
-│  Processor          │ NVIDIA Jetson AGX Orin (8-core ARM Cortex-A78AE)     │
+│  Board              │ NVIDIA Jetson AGX Orin Developer Kit (p3701-0005)    │
+│  Processor          │ 12-core ARM Cortex-A78AE v8.2 64-bit CPU             │
 │  GPU                │ NVIDIA Ampere (2048 CUDA cores, 64 Tensor cores)     │
-│  Memory             │ 32GB LPDDR5                                          │
-│  Storage            │ 64GB eMMC 5.1                                       │
-│  Power              │ 15W-60W                                             │
-│  Camera             │ CSI Camera (Raspberry Pi Camera v2 or similar)      │
-│  Microphone         │ USB or I2S microphone                               │
-│  Network            │ Gigabit Ethernet                                    │
-│  OS                 │ Ubuntu 20.04 LTS (JetPack 5.0+)                     │
+│  Memory             │ 64GB 256-bit LPDDR5 (204.8 GB/s)                     │
+│  Storage            │ 64GB eMMC 5.1 + NVMe SSD (PCIe Gen4)                │
+│  Power Mode         │ MODE_50W (Configurable 15W - 60W)                    │
+│  Camera             │ CSI Camera (nvarguscamerasrc) / USB UVC Camera       │
+│  Microphone         │ USB / I2S microphone (ALSA)                          │
+│  Network            │ Gigabit Ethernet / Wi-Fi                             │
+│  OS / L4T           │ Ubuntu 22.04 LTS (JetPack 6.2.1 / L4T 36.4.7)        │
 │                                                                             │
 │  Recommended:                                                               │
 │  • NVMe SSD (512GB+) for data storage                                     │
@@ -750,8 +750,8 @@ pytest-asyncio>=0.21.0        # Async Tests
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/nvidia-jetson-agx-orin-edge-ai.git
-cd nvidia-jetson-agx-orin-edge-ai
+git clone https://github.com/vivek97vivu/Argus-EdgeAI.git
+cd Argus-EdgeAI
 
 # Run setup script
 chmod +x scripts/setup.sh
@@ -763,8 +763,8 @@ sudo ./scripts/setup.sh
 #### Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/nvidia-jetson-agx-orin-edge-ai.git
-cd nvidia-jetson-agx-orin-edge-ai
+git clone https://github.com/vivek97vivu/Argus-EdgeAI.git
+cd Argus-EdgeAI
 ```
 
 #### Step 2: Install System Dependencies
