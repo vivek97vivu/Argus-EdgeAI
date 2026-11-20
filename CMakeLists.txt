@@ -1,15 +1,33 @@
-cmake_minimum_required(VERSION 3.10)
-project(nvidia-jetson-agx-orin-edge-ai)
+cmake_minimum_required(VERSION 3.18)
+project(argus-edge-ai VERSION 2.0.0 LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -Wextra -O2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -Wextra -O3 -fPIC")
 
-# Find required packages
+# Jetson AGX Orin Ampere Architecture (Compute Capability 8.7)
+set(CMAKE_CUDA_ARCHITECTURES 87)
+set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+
+# Find required packages for JetPack 6.2.1
 find_package(OpenCV REQUIRED)
-find_package(CUDA REQUIRED)
-find_package(Python3 REQUIRED)
+find_package(CUDAToolkit REQUIRED)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(PkgConfig REQUIRED)
+
+# Standard JetPack 6.2 / L4T paths
+include_directories(
+    /usr/local/cuda/include
+    /usr/include/aarch64-linux-gnu
+    /usr/local/include/opencv4
+)
+
+link_directories(
+    /usr/local/cuda/lib64
+    /usr/lib/aarch64-linux-gnu
+    /usr/local/lib
+)
 
 # GStreamer
 pkg_check_modules(GSTREAMER REQUIRED gstreamer-1.0 gstreamer-app-1.0)
