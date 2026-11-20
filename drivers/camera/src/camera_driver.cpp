@@ -56,17 +56,34 @@ private:
     std::function<void(cv::Mat)> callback_;
     
     GstElement* createPipeline(const CameraConfig& config) {
-        std::string pipelineStr = 
-            config.pipeline + 
-            " ! video/x-raw,width=" + std::to_string(config.width) +
-            ",height=" + std::to_string(config.height) +
-            ",framerate=" + std::to_string(config.fps) + "/1" +
-            " ! nvvidconv ! video/x-raw,format=BGRx" +
-            " ! nvvidconv ! video/x-raw,format=BGR" +
-            " ! appsink name=sink";
+        std::string pipelineStr;
+        if (config.type == CAMERA_CSI) {
+            // JetPack 6.2 nvarguscamerasrc with NVMM hardware accelerated conversion
+            pipelineStr = "nvarguscamerasrc sensor-id=0 ! "
+                          "video/x-raw(memory:NVMM),width=" + std::to_string(config.width) +
+                          ",height=" + std::to_string(config.height) +
+                          ",framerate=" + std::to_string(config.fps) + "/1,format=NV12 ! "
+                          "nvvidconv ! video/x-raw,format=BGRx ! "
+                          "videoconvert ! video/x-raw,format=BGR ! "
+                          "appsink name=sink drop=true max-buffers=2";
+        } else {
+            // USB V4L2 fallback
+            pipelineStr = "v4l2src device=" + config.device + " ! "
+                          "video/x-raw,width=" + std::to_string(config.width) +
+                          ",height=" + std::to_string(config.height) +
+                          ",framerate=" + std::to_string(config.fps) + "/1 ! "
+                          "videoconvert ! video/x-raw,format=BGR ! "
+                          "appsink name=sink drop=true max-buffers=2";
+        }
             
-        GstElement* pipeline = 
-            gst_parse_launch(pipelineStr.c_str(), NULL);
+        GError* error = nullptr;
+        GstElement* pipeline = gst_parse_launch(pipelineStr.c_str(), &error);
+        if (!pipeline || error) {
+            std::cerr << "Failed to parse GStreamer pipeline: " 
+                      << (error ? error->message : "unknown error") << std::endl;
+            if (error) g_error_free(error);
+            return nullptr;
+        }
         appsink_ = gst_bin_get_by_name(GST_BIN(pipeline), "sink");
         gst_app_sink_set_drop(GST_APP_SINK(appsink_), true);
         gst_app_sink_set_max_buffers(GST_APP_SINK(appsink_), 2);
