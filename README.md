@@ -1,17 +1,34 @@
-# Argus-EdgeAI: NVIDIA Jetson AGX Orin Edge AI Platform
+<div align="center">
 
-[![Platform](https://img.shields.io/badge/platform-Jetson%20AGX%20Orin%2064GB-blue)](https://developer.nvidia.com/embedded/jetson-agx-orin)
-[![JetPack](https://img.shields.io/badge/JetPack-6.2.1%20%5BL4T%2036.4.7%5D-green)](https://developer.nvidia.com/embedded/jetpack)
-[![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20LTS-orange)](https://ubuntu.com/)
-[![CUDA](https://img.shields.io/badge/CUDA-12.6.68-76B900.svg)](https://developer.nvidia.com/cuda-toolkit)
-[![TensorRT](https://img.shields.io/badge/TensorRT-10.3.0.30-purple.svg)](https://developer.nvidia.com/tensorrt)
-[![OpenCV](https://img.shields.io/badge/OpenCV-4.10.0%20(CUDA%3A%20YES)-red.svg)](https://opencv.org/)
-[![cuDNN](https://img.shields.io/badge/cuDNN-9.3.0-blue.svg)](https://developer.nvidia.com/cudnn)
-[![VPI](https://img.shields.io/badge/VPI-3.2.4-blue.svg)](https://developer.nvidia.com/embedded/vpi)
-[![Python](https://img.shields.io/badge/Python-3.10-yellow.svg)](https://www.python.org/)
-[![C++](https://img.shields.io/badge/C%2B%2B-17%2F20-blue.svg)](https://isocpp.org/)
-[![MQTT](https://img.shields.io/badge/MQTT-5.0-yellow.svg)](https://mqtt.org/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+# ⚡ Argus-EdgeAI
+
+### High-Performance Edge AI Platform for NVIDIA Jetson AGX Orin 64GB
+**JetPack 6.2.1 [L4T 36.4.7] • CUDA 12.6 • TensorRT 10.3 • OpenCV 4.10 (CUDA)**
+
+<br/>
+
+[![Platform](https://img.shields.io/badge/Platform-Jetson%20AGX%20Orin%2064GB-76B900?style=for-the-badge&logo=nvidia&logoColor=white)](https://developer.nvidia.com/embedded/jetson-agx-orin)
+[![JetPack](https://img.shields.io/badge/JetPack-6.2.1%20%5BL4T%2036.4.7%5D-76B900?style=for-the-badge&logo=nvidia&logoColor=white)](https://developer.nvidia.com/embedded/jetpack)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20LTS-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
+[![CUDA](https://img.shields.io/badge/CUDA-12.6.68-76B900?style=for-the-badge&logo=nvidia&logoColor=white)](https://developer.nvidia.com/cuda-toolkit)
+[![TensorRT](https://img.shields.io/badge/TensorRT-10.3.0.30-76B900?style=for-the-badge&logo=nvidia&logoColor=white)](https://developer.nvidia.com/tensorrt)
+[![OpenCV](https://img.shields.io/badge/OpenCV-4.10.0%20(CUDA)-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)](https://opencv.org/)
+[![cuDNN](https://img.shields.io/badge/cuDNN-9.3.0-0071C5?style=for-the-badge&logo=nvidia&logoColor=white)](https://developer.nvidia.com/cudnn)
+[![VPI](https://img.shields.io/badge/VPI-3.2.4-0071C5?style=for-the-badge&logo=nvidia&logoColor=white)](https://developer.nvidia.com/embedded/vpi)
+[![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![C++](https://img.shields.io/badge/C%2B%2B-17%2F20-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)](https://isocpp.org/)
+[![MQTT](https://img.shields.io/badge/MQTT-5.0-660066?style=for-the-badge&logo=eclipsemosquitto&logoColor=white)](https://mqtt.org/)
+[![License](https://img.shields.io/badge/License-MIT-brightgreen?style=for-the-badge)](LICENSE)
+
+<br/>
+
+*An intelligent, hardware-accelerated edge platform delivering real-time facial recognition, biometric voice verification, automated attendance tracking, and low-latency C++ HAL drivers on Jetson AGX Orin.*
+
+<br/>
+
+[Key Capabilities](#-overview) • [System Architecture](#-system-architecture) • [Block Diagram](#-block-diagram) • [Hardware Requirements](#-hardware-requirements) • [Installation Guide](#-installation) • [API Reference](#-api-reference)
+
+</div>
 
 ---
 
