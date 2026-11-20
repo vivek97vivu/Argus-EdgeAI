@@ -1,7 +1,7 @@
-FROM nvcr.io/nvidia/l4t-jetpack:r35.2.1
+FROM nvcr.io/nvidia/l4t-jetpack:r36.4.0
 
-LABEL maintainer="Edge AI Team"
-LABEL description="NVIDIA Jetson AGX Orin Edge AI System"
+LABEL maintainer="vivek97vivu"
+LABEL description="Argus-EdgeAI: NVIDIA Jetson AGX Orin 64GB Edge AI System (JetPack 6.2.1 / L4T 36.4.7)"
 
 # Set working directory
 WORKDIR /app

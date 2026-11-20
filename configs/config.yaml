@@ -1,7 +1,10 @@
 # Edge AI System Configuration
 system:
-  name: "NVIDIA Jetson AGX Orin Edge AI System"
-  version: "1.0.0"
+  name: "Argus-EdgeAI"
+  platform: "NVIDIA Jetson AGX Orin Developer Kit 64GB"
+  jetpack: "6.2.1 [L4T 36.4.7]"
+  power_mode: "MODE_50W"
+  version: "2.0.0"
   log_level: "INFO"
   debug: false
 

@@ -1,10 +1,10 @@
 #!/bin/bash
-# Setup script for NVIDIA Jetson AGX Orin Edge AI System
+# Setup script for Argus-EdgeAI on NVIDIA Jetson AGX Orin (JetPack 6.2.1)
 
 set -e
 
-echo "🚀 Setting up NVIDIA Jetson AGX Orin Edge AI System"
-echo "===================================================="
+echo "🚀 Setting up Argus-EdgeAI on NVIDIA Jetson AGX Orin (JetPack 6.2.1)"
+echo "=================================================================="
 
 # Check if running on Jetson
 if ! grep -q "tegra" /proc/device-tree/model 2>/dev/null; then
