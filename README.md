@@ -119,13 +119,13 @@ The **NVIDIA Jetson AGX Orin Edge AI System** is a comprehensive, production-rea
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
 │  │                     NVIDIA GPU / NPU Acceleration                   │   │
 │  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐       │   │
-│  │  │ CUDA   │  │TensorRT│  │ cuDNN  │  │ OpenCV │  │  NPP   │       │   │
-│  │  │ 11.4+  │  │ 8.5+   │  │ 8.6+   │  │ GPU    │  │  Lib   │       │   │
+│  │  │ CUDA   │  │TensorRT│  │ cuDNN  │  │ OpenCV │  │  VPI   │       │   │
+│  │  │ 12.6+  │  │ 10.3+  │  │ 9.3+   │  │ 4.10+  │  │  3.2+  │       │   │
 │  │  └────────┘  └────────┘  └────────┘  └────────┘  └────────┘       │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                     Linux Kernel / JetPack 5.0+                     │   │
+│  │               Linux Kernel 5.15-tegra / JetPack 6.2.1 [L4T 36.4.7]   │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -666,16 +666,20 @@ The **NVIDIA Jetson AGX Orin Edge AI System** is a comprehensive, production-rea
 
 ```bash
 # Required Packages
-- build-essential        # Compiler, make, etc.
-- cmake >= 3.10         # Build system
-- git                   # Version control
-- python3 >= 3.8        # Python runtime
-- python3-pip           # Python package manager
+- build-essential        # GCC 11.4 / G++ 11.4 compiler
+- cmake >= 3.18          # Modern CMake with CUDA toolkit support
+- git                    # Version control
+- python3 >= 3.10        # Python runtime (Ubuntu 22.04 default)
+- python3-pip            # Python package manager
 
-# Media Libraries
-- libopencv-dev >= 4.8  # Computer vision
-- libgstreamer1.0-dev   # Multimedia framework
-- gstreamer1.0-plugins-* # GStreamer plugins
+# Jetson Acceleration & Media Libraries
+- CUDA Toolkit 12.6.68   # GPU computing framework
+- TensorRT 10.3.0.30     # High-performance deep learning inference
+- cuDNN 9.3.0            # Deep neural network primitives
+- libopencv-dev 4.10.0   # OpenCV with CUDA & contrib acceleration
+- VPI 3.2.4              # Vision Programming Interface
+- libgstreamer1.0-dev    # Multimedia framework (1.20.3+)
+- gstreamer1.0-plugins-* # GStreamer plugins (nvarguscamerasrc, nvvidconv)
 
 # Communication Libraries
 - libmosquitto-dev      # MQTT client
@@ -700,16 +704,18 @@ The **NVIDIA Jetson AGX Orin Edge AI System** is a comprehensive, production-rea
 ### Python Dependencies
 
 ```python
-# Core
-opencv-python>=4.8.0          # Computer Vision
-numpy>=1.24.0                 # Numerical computing
-scipy>=1.10.0                 # Scientific computing
+# Core (JetPack 6.2.1 / Python 3.10)
+opencv-python>=4.10.0         # Built system-wide with CUDA 12.6
+numpy>=1.24.0,<2.0.0          # Numerical computing
+scipy>=1.11.0                 # Scientific computing
 
-# AI/ML
-tensorrt>=8.5.0               # NVIDIA TensorRT
-torch>=2.0.0                  # PyTorch
-torchvision>=0.15.0           # PyTorch Vision
-onnxruntime-gpu>=1.15.0       # ONNX Runtime
+# AI/ML & Jetson Hardware Acceleration
+tensorrt==10.3.0.30           # NVIDIA TensorRT 10.x
+torch>=2.4.0                  # PyTorch for JetPack 6
+torchvision>=0.19.0           # PyTorch Vision for JetPack 6
+onnxruntime-gpu>=1.19.0       # ONNX Runtime with CUDA EP
+cuda-python>=12.6.0           # NVIDIA CUDA Python Bindings
+jetson-stats>=7.2.0           # jtop monitoring tool
 
 # Web/API
 fastapi>=0.100.0              # Web Framework
@@ -787,18 +793,23 @@ sudo apt-get install -y \
     v4l-utils
 ```
 
-#### Step 3: Install Python Dependencies
+#### Step 3: Setup Python & Conda Environment
 
 ```bash
-pip3 install --upgrade pip
-pip3 install -r requirements.txt
+# Option A: Activate existing conda environment (recommended)
+conda activate belt
+pip install -r requirements.txt
+
+# Option B: Create fresh conda environment from environment.yml
+conda env create -f environment.yml
+conda activate belt
 ```
 
-#### Step 4: Build C++ Application
+#### Step 4: Build C++ Application with CUDA Architecture sm_87
 
 ```bash
 mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_ARCHITECTURES=87
 make -j$(nproc)
 sudo make install
 ```
@@ -835,13 +846,13 @@ sudo systemctl daemon-reload
 sudo systemctl enable edge_ai.service
 ```
 
-### Docker Installation
+### Docker Installation (JetPack 6.2 / L4T 36.4)
 
 ```bash
 # Build Docker image
-docker build -t edge-ai .
+docker build -t argus-edge-ai .
 
-# Run Docker container
+# Run Docker container with NVIDIA runtime
 docker run --rm \
     --runtime nvidia \
     --privileged \
@@ -849,7 +860,7 @@ docker run --rm \
     -p 8080:8080 \
     -p 1883:1883 \
     -v /var/edge_ai:/var/edge_ai \
-    edge-ai
+    argus-edge-ai
 ```
 
 ---
