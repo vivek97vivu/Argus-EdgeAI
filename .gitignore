@@ -1,0 +1,42 @@
+# Build and compilation
+build/
+bin/
+lib/
+*.o
+*.a
+*.so
+*.dylib
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Jetson / AI Models & Databases
+*.engine
+*.plan
+*.onnx
+*.weights
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs and runtime data
+*.log
+data/
+logs/
