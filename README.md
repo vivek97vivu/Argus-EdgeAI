@@ -81,70 +81,59 @@ The **NVIDIA Jetson AGX Orin Edge AI System** is a comprehensive, production-rea
 
 ### High-Level Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                      NVIDIA JETSON AGX ORIN EDGE AI SYSTEM                  │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐  ┌──────────────┐ │
-│  │   Application  │  │   Dashboard   │  │   Mobile App  │  │  External    │ │
-│  │   Layer        │  │   (Web UI)    │  │   (React      │  │  Systems     │ │
-│  │   (C++/Python) │  │               │  │   Native)     │  │  (Cloud/API) │ │
-│  └───────┬───────┘  └───────┬───────┘  └───────┬───────┘  └──────┬──────┘ │
-│          │                  │                  │                  │         │
-│  ┌───────▼──────────────────▼──────────────────▼──────────────────▼──────┐ │
-│  │                     API & Communication Layer                          │ │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐  │ │
-│  │  │  REST    │  │WebSocket │  │  MQTT    │  │  TCP/IP  │  │  gRPC  │  │ │
-│  │  │  API     │  │  Server  │  │  Client  │  │  Client  │  │  Server│  │ │
-│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘  └────────┘  │ │
-│  └────────────────────────────────────────────────────────────────────────┘ │
-│          │                  │                  │                           │
-│  ┌───────▼──────────────────▼──────────────────▼──────────────────────┐   │
-│  │                      AI Processing Pipeline                        │   │
-│  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐       │   │
-│  │  │ Face   │  │ Face   │  │ Voice  │  │ Human  │  │ Person │       │   │
-│  │  │ Detect │→│Recognize│→│  Auth  │→│ Detect │→│ Track  │       │   │
-│  │  └────────┘  └────────┘  └────────┘  └────────┘  └────────┘       │   │
-│  │                                                                    │   │
-│  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐       │   │
-│  │  │Attend- │  │ Visitor│  │Surveil-│  │Analyt- │  │Notifi- │       │   │
-│  │  │ ance   │  │ Mgmt   │  │ lance  │  │ ics    │  │ cations│       │   │
-│  │  └────────┘  └────────┘  └────────┘  └────────┘  └────────┘       │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│          │                  │                  │                           │
-│  ┌───────▼──────────────────▼──────────────────▼──────────────────────┐   │
-│  │                      Hardware Abstraction Layer                     │   │
-│  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐       │   │
-│  │  │Camera  │  │Micro-  │  │  GPIO  │  │  SPI   │  │  UART  │       │   │
-│  │  │Driver  │  │ phone  │  │Driver  │  │Driver  │  │Driver  │       │   │
-│  │  └────────┘  └────────┘  └────────┘  └────────┘  └────────┘       │   │
-│  │  ┌────────┐  ┌────────┐  ┌────────┐                               │   │
-│  │  │  I2C   │  │Storage │  │  PWM   │                               │   │
-│  │  │Driver  │  │Driver  │  │Driver  │                               │   │
-│  │  └────────┘  └────────┘  └────────┘                               │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│          │                  │                  │                           │
-│  ┌───────▼──────────────────▼──────────────────▼──────────────────────┐   │
-│  │                        Data Management Layer                        │   │
-│  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐       │   │
-│  │  │ SQLite │  │ File   │  │ Cache  │  │ Backup │  │ Index  │       │   │
-│  │  │Database│  │System  │  │Manager │  │Manager │  │Manager │       │   │
-│  │  └────────┘  └────────┘  └────────┘  └────────┘  └────────┘       │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │                     NVIDIA GPU / NPU Acceleration                   │   │
-│  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐       │   │
-│  │  │ CUDA   │  │TensorRT│  │ cuDNN  │  │ OpenCV │  │  VPI   │       │   │
-│  │  │ 12.6+  │  │ 10.3+  │  │ 9.3+   │  │ 4.10+  │  │  3.2+  │       │   │
-│  │  └────────┘  └────────┘  └────────┘  └────────┘  └────────┘       │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐   │
-│  │               Linux Kernel 5.15-tegra / JetPack 6.2.1 [L4T 36.4.7]   │   │
-│  └─────────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    classDef app fill:#2D3748,stroke:#4A5568,stroke-width:2px,color:#fff;
+    classDef comm fill:#1A365D,stroke:#2B6CB0,stroke-width:2px,color:#fff;
+    classDef ai fill:#22543D,stroke:#38A169,stroke-width:2px,color:#fff;
+    classDef hal fill:#744210,stroke:#D69E2E,stroke-width:2px,color:#fff;
+    classDef hw fill:#1C4532,stroke:#48BB78,stroke-width:3px,color:#fff;
+
+    subgraph APP ["Application & Presentation Layer"]
+        C_APP["C++ Core Application (edge_ai_app)"]:::app
+        DASH["Web Dashboard UI (React/TS)"]:::app
+        MOB["Mobile App (React Native)"]:::app
+        EXT["External Cloud & REST Clients"]:::app
+    end
+
+    subgraph COMM ["API & Communication Layer"]
+        direction LR
+        REST["REST API Server (Port 8000)"]:::comm
+        WS["WebSocket Server (Port 8080)"]:::comm
+        MQTT["MQTT Client (Port 1883)"]:::comm
+        TCP["TCP/IP Telemetry"]:::comm
+    end
+
+    subgraph AI ["AI Processing Pipeline (TensorRT 10.3 / CUDA 12.6)"]
+        direction TB
+        FD["Face Detection (TensorRT Engine)"]:::ai --> FR["Face Recognition (512-d Embedding)"]:::ai
+        FR --> VA["Voice Biometrics (ALSA/VAD)"]:::ai
+        VA --> HD["Human Detection & Tracking (DeepSORT)"]:::ai
+        HD --> AT["Attendance & Access Control Engine"]:::ai
+        AT --> VM["Visitor Management & Security"]:::ai
+    end
+
+    subgraph HAL ["Hardware Abstraction Layer (HAL C++17)"]
+        direction LR
+        CAM["CSI/USB Camera Driver"]:::hal
+        MIC["Audio / Microphone Driver"]:::hal
+        GPIO["GPIO / PWM / Door Driver"]:::hal
+        SPI["SPI Bus Driver"]:::hal
+        UART["Async UART Driver"]:::hal
+        I2C["I2C Sensor Driver"]:::hal
+        STOR["Encrypted Storage / Cache"]:::hal
+    end
+
+    subgraph HW ["NVIDIA Jetson AGX Orin 64GB Hardware Acceleration"]
+        GPU["Ampere GPU (2048 CUDA Cores, 64 Tensor Cores)"]:::hw
+        NPU["2x NVDLA 2.0 Engines (275 TOPS INT8)"]:::hw
+        STACK["JetPack 6.2.1 • L4T 36.4.7 • Linux Kernel 5.15-tegra"]:::hw
+    end
+
+    APP ==> COMM
+    COMM ==> AI
+    AI ==> HAL
+    HAL ==> HW
 ```
 
 ---
@@ -153,77 +142,61 @@ The **NVIDIA Jetson AGX Orin Edge AI System** is a comprehensive, production-rea
 
 ### System Component Block Diagram
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           INPUT DEVICES                                        │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐  │
-│  │   CSI Camera  │    │   USB Camera │    │  Microphone  │    │   GPIO       │  │
-│  │   (MIPI-CSI)  │    │   (UVC)      │    │   (I2S/USB)  │    │   Sensors    │  │
-│  └──────┬───────┘    └──────┬───────┘    └──────┬───────┘    └──────┬───────┘  │
-│         │                   │                   │                   │          │
-│         └───────────────────┼───────────────────┼───────────────────┘          │
-│                             │                   │                              │
-│         ┌───────────────────▼───────────────────▼───────────────────┐          │
-│         │                    JETSON AGX ORIN                        │          │
-│         │  ┌─────────────────────────────────────────────────────┐  │          │
-│         │  │              DRIVER INTERFACE LAYER                │  │          │
-│         │  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  │  │          │
-│         │  │  │Camera  │  │Micro-  │  │ GPIO   │  │  SPI   │  │  │          │
-│         │  │  │Driver  │  │ phone  │  │Driver  │  │Driver  │  │  │          │
-│         │  │  └────────┘  └────────┘  └────────┘  └────────┘  │  │          │
-│         │  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  │  │          │
-│         │  │  │  UART  │  │  I2C   │  │Storage │  │  PWM   │  │  │          │
-│         │  │  │Driver  │  │Driver  │  │Driver  │  │Driver  │  │  │          │
-│         │  │  └────────┘  └────────┘  └────────┘  └────────┘  │  │          │
-│         │  └─────────────────────────────────────────────────────┘  │          │
-│         │                         │                                │          │
-│         │  ┌──────────────────────▼─────────────────────────────┐  │          │
-│         │  │                    AI PIPELINE                     │  │          │
-│         │  │  ┌───────────────┐  ┌───────────────┐             │  │          │
-│         │  │  │  Pre-         │  │  TensorRT     │             │  │          │
-│         │  │  │  Processing   │  │  Inference    │             │  │          │
-│         │  │  └───────────────┘  └───────────────┘             │  │          │
-│         │  │  ┌───────────────┐  ┌───────────────┐             │  │          │
-│         │  │  │  Post-        │  │  Feature      │             │  │          │
-│         │  │  │  Processing   │  │  Extraction   │             │  │          │
-│         │  │  └───────────────┘  └───────────────┘             │  │          │
-│         │  └─────────────────────────────────────────────────────┘  │          │
-│         │                         │                                │          │
-│         │  ┌──────────────────────▼─────────────────────────────┐  │          │
-│         │  │               BUSINESS LOGIC                       │  │          │
-│         │  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  │  │          │
-│         │  │  │Attend- │  │Visitor │  │Surveil-│  │Analyt- │  │  │          │
-│         │  │  │ ance   │  │ Mgmt   │  │ lance  │  │ ics    │  │  │          │
-│         │  │  └────────┘  └────────┘  └────────┘  └────────┘  │  │          │
-│         │  └─────────────────────────────────────────────────────┘  │          │
-│         │                         │                                │          │
-│         │  ┌──────────────────────▼─────────────────────────────┐  │          │
-│         │  │              DATA MANAGEMENT                       │  │          │
-│         │  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  │  │          │
-│         │  │  │Database│  │ File   │  │ Cache  │  │ Backup │  │  │          │
-│         │  │  │Manager │  │System  │  │Manager │  │Manager │  │  │          │
-│         │  │  └────────┘  └────────┘  └────────┘  └────────┘  │  │          │
-│         │  └─────────────────────────────────────────────────────┘  │          │
-│         │                         │                                │          │
-│         │  ┌──────────────────────▼─────────────────────────────┐  │          │
-│         │  │           COMMUNICATION LAYER                      │  │          │
-│         │  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  │  │          │
-│         │  │  │  REST  │  │WebSocket│  │  MQTT  │  │  TCP   │  │  │          │
-│         │  │  │  API   │  │ Server │  │Client  │  │Client  │  │  │          │
-│         │  │  └────────┘  └────────┘  └────────┘  └────────┘  │  │          │
-│         │  └─────────────────────────────────────────────────────┘  │          │
-│         └───────────────────────────────────────────────────────────┘          │
-│                             │                                                   │
-│         ┌───────────────────┼───────────────────┐                             │
-│         │                   │                   │                              │
-│  ┌──────▼──────┐    ┌──────▼──────┐    ┌──────▼──────┐                       │
-│  │  Dashboard  │    │ Mobile App  │    │ External    │                       │
-│  │  (Web UI)   │    │  (React)    │    │  Systems    │                       │
-│  └─────────────┘    └─────────────┘    └─────────────┘                       │
-│                                                                                 │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    classDef dev fill:#1A202C,stroke:#4A5568,stroke-width:2px,color:#fff;
+    classDef jetson fill:#1C4532,stroke:#48BB78,stroke-width:2px,color:#fff;
+    classDef cloud fill:#2C5282,stroke:#4299E1,stroke-width:2px,color:#fff;
+
+    subgraph IN ["Input Telemetry Devices"]
+        CAM["CSI / USB Cameras (MIPI/UVC)"]:::dev
+        MIC["Microphone Array (I2S/ALSA)"]:::dev
+        SENS["Sensors & GPIO Triggers"]:::dev
+    end
+
+    subgraph JETSON ["NVIDIA Jetson AGX Orin 64GB (Edge System)"]
+        direction TB
+        
+        subgraph DRV ["Hardware Driver Layer"]
+            D1["CameraDriver (nvarguscamerasrc)"]
+            D2["MicrophoneDriver & AudioProcessor"]
+            D3["GPIODriver (PWM & Interrupts)"]
+            D4["I2C, SPI & UART Drivers"]
+        end
+
+        subgraph AI_CORE ["Edge AI Engine"]
+            P1["Pre-processing (NVMM Memory)"]
+            P2["TensorRT 10.3 Accelerated Inference"]
+            P3["Feature Extraction & Embeddings"]
+        end
+
+        subgraph BIZ ["Core Applications & DB"]
+            B1["Attendance Engine"]
+            B2["Visitor Management"]
+            B3["Perimeter Surveillance"]
+            DB[(SQLite Attendance DB)]
+        end
+
+        subgraph NET ["Network Interfaces"]
+            NET1["Embedded REST API (8000)"]
+            NET2["WebSocket Server (8080)"]
+            NET3["MQTT Client (1883)"]
+        end
+
+        DRV --> AI_CORE
+        AI_CORE --> BIZ
+        BIZ <--> DB
+        BIZ --> NET
+    end
+
+    subgraph OUT ["User Interface & External Consumers"]
+        UI_DASH["Web Dashboard"]:::cloud
+        UI_MOB["Mobile App"]:::cloud
+        UI_MQTT["Cloud MQTT Broker"]:::cloud
+    end
+
+    IN ==> DRV
+    NET ==> OUT
 ```
 
 ---
@@ -232,342 +205,180 @@ The **NVIDIA Jetson AGX Orin Edge AI System** is a comprehensive, production-rea
 
 ### 1. Main System Control Flow
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                          SYSTEM STARTUP FLOW                                   │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌─────────────────┐                                                           │
-│  │   System Start  │                                                           │
-│  └────────┬────────┘                                                           │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────┐                                                           │
-│  │  Load Config    │                                                           │
-│  │  (config.yaml)  │                                                           │
-│  └────────┬────────┘                                                           │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Initialize Hardware Modules                         │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  Initialize  │  │  Initialize  │  │  Initialize  │  │ Initialize│  │   │
-│  │  │   Camera     │  │    GPIO      │  │   Storage    │  │    SPI    │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  Initialize  │  │  Initialize  │  │  Initialize  │  │ Initialize│  │   │
-│  │  │    UART      │  │     I2C      │  │  Microphone  │  │    PWM    │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                   Initialize AI Models                                 │   │
-│  │  ┌──────────────────────────────────────────────────────────────────┐  │   │
-│  │  │  Load TensorRT Engines:                                         │  │   │
-│  │  │  • Face Detection Model  • Face Recognition Model               │  │   │
-│  │  │  • Voice Auth Model      • Human Detection Model                │  │   │
-│  │  │  • Person Tracking Model • Surveillance Model                   │  │   │
-│  │  └──────────────────────────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                   Initialize Communication                              │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  Start MQTT  │  │  Start REST  │  │  Start       │  │  Start   │  │   │
-│  │  │  Client      │  │  API Server  │  │  WebSocket   │  │  TCP     │  │   │
-│  │  │              │  │              │  │  Server      │  │  Server  │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                      Start Main Processing Loop                         │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Running State                                        │   │
-│  │  ┌──────────────────────────────────────────────────────────────────┐  │   │
-│  │  │  Process Frames → Detect → Recognize → Action → Store → Notify  │  │   │
-│  │  └──────────────────────────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                     Shutdown Handler                                    │   │
-│  │  ┌──────────────────────────────────────────────────────────────────┐  │   │
-│  │  │  Stop All Modules → Save State → Cleanup → Exit                 │  │   │
-│  │  └──────────────────────────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│                                                                                 │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    START([System Startup]) --> LOAD_CFG["Load Configuration<br/>(config.yaml)"]
+    LOAD_CFG --> INIT_HW["Initialize Hardware Drivers<br/>(Camera, GPIO, Storage, SPI, I2C, UART)"]
+    
+    INIT_HW --> INIT_AI["Initialize TensorRT 10 AI Engines"]
+    subgraph MODELS ["AI Models Loading"]
+        M1["Face Detection Engine"]
+        M2["Face Recognition Engine"]
+        M3["Voice Auth Engine"]
+        M4["Human Detection Engine"]
+    end
+    INIT_AI --> MODELS
+    
+    MODELS --> INIT_COMM["Initialize Communication Services"]
+    subgraph SERVICES ["Network Services"]
+        S1["MQTT Client (1883)"]
+        S2["REST API Server (8000)"]
+        S3["WebSocket Server (8080)"]
+    end
+    INIT_COMM --> SERVICES
+    
+    SERVICES --> LOOP["Start Main Processing Loop (Live Inference)"]
+    LOOP --> RUNNING{"Running State: Active"}
+    RUNNING -- "Signal Interrupt (SIGINT/SIGTERM)" --> SHUTDOWN["Shutdown Handler & Resource Cleanup"]
+    SHUTDOWN --> DONE([Graceful Exit])
 ```
 
 ### 2. AI Processing Pipeline Flow
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                      AI PROCESSING PIPELINE                                    │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌─────────────────┐                                                           │
-│  │  Capture Frame  │                                                           │
-│  │  (Camera Input) │                                                           │
-│  └────────┬────────┘                                                           │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                       Pre-processing                                    │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  Resize      │  │  Normalize   │  │  Convert     │  │  Enhance │  │   │
-│  │  │  Image       │→│  Pixel       │→│  Color       │→│  Image    │  │   │
-│  │  │              │  │  Values      │  │  Space       │  │  Quality  │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Face Detection                                        │   │
-│  │  ┌──────────────────────────────────────────────────────────────────┐  │   │
-│  │  │  TensorRT Inference Engine                                       │  │   │
-│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────┐  │  │   │
-│  │  │  │  Run       │  │  Decode    │  │  NMS       │  │  Extract │  │  │   │
-│  │  │  │  Inference │→│  Output    │→│  Filter    │→│  Face     │  │  │   │
-│  │  │  │            │  │            │  │            │  │  Boxes   │  │  │   │
-│  │  │  └────────────┘  └────────────┘  └────────────┘  └──────────┘  │  │   │
-│  │  └──────────────────────────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Face Recognition                                     │   │
-│  │  ┌──────────────────────────────────────────────────────────────────┐  │   │
-│  │  │  For Each Detected Face:                                        │  │   │
-│  │  │  ┌────────────────────────────────────────────────────────────┐ │  │   │
-│  │  │  │  • Align Face    →  • Extract Embedding  →  • Search DB   │ │  │   │
-│  │  │  └────────────────────────────────────────────────────────────┘ │  │   │
-│  │  └──────────────────────────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Decision Making                                       │   │
-│  │  ┌──────────────────────────────────────────────────────────────────┐  │   │
-│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────┐  │  │   │
-│  │  │  │  Matched?  │→│  Known     │→│  Unknown   │→│  Visitor │  │  │   │
-│  │  │  │  Identity  │  │  Employee  │  │  Person    │  │  Detected│  │  │   │
-│  │  │  └────────────┘  └────────────┘  └────────────┘  └──────────┘  │  │   │
-│  │  └──────────────────────────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Business Logic Actions                                │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  Record      │  │  Send        │  │  Trigger     │  │  Log to  │  │   │
-│  │  │  Attendance  │→│  Notification│→│  GPIO Alert  │→│  Database│  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Communication & Storage                               │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  Publish     │  │  Broadcast   │  │  Save to     │  │  Update  │  │   │
-│  │  │  MQTT        │  │  WebSocket   │  │  File System │  │  Cache   │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│                                                                                 │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    FRAME["Capture Video Frame<br/>(nvarguscamerasrc CSI/USB)"] --> PRE["Pre-processing<br/>(Resize, NVMM Color Conversion, Normalize)"]
+    
+    PRE --> DET["Face Detection<br/>(TensorRT 10.3 Engine)"]
+    DET --> NMS["NMS Filtering & Bounding Box Extraction"]
+    
+    NMS --> REC["Face Recognition<br/>(Align Face & Extract 512-d Embedding)"]
+    REC --> SEARCH["Vector Similarity Search<br/>(SQLite / FAISS Database)"]
+    
+    SEARCH --> MATCH{"Identity Matched?<br/>(Threshold >= 0.70)"}
+    MATCH -- "Yes" --> EMP["Known Employee Verified"]
+    MATCH -- "No" --> UNK["Visitor / Unregistered Person"]
+    
+    EMP --> ACT_EMP["Record Attendance & Trigger Door Unlock (GPIO)"]
+    UNK --> ACT_UNK["Log Visitor Event & Send Security Alert (MQTT)"]
+    
+    ACT_EMP --> STORE["Save Audit Event to DB & Broadcast via WebSocket"]
+    ACT_UNK --> STORE
 ```
 
 ### 3. Attendance Management Flow
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                    ATTENDANCE MANAGEMENT FLOW                                   │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Face Detection & Recognition                         │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Identify Employee                                     │   │
-│  │  ┌──────────────────────────────────────────────────────────────────┐  │   │
-│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────┐  │  │   │
-│  │  │  │  Found     │  │  Employee  │  │  Verified  │  │  Match   │  │  │   │
-│  │  │  │  Employee  │→│  Database  │→│  Identity  │→│  Found   │  │  │   │
-│  │  │  └────────────┘  └────────────┘  └────────────┘  └──────────┘  │  │   │
-│  │  └──────────────────────────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Check Current Status                                  │   │
-│  │  ┌──────────────────────────────────────────────────────────────────┐  │   │
-│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐                 │  │   │
-│  │  │  │  Already   │  │  Already   │  │  New Entry │                 │  │   │
-│  │  │  │  Checked   │  │  Checked   │  │  Required  │                 │  │   │
-│  │  │  │  In?       │  │  Out?      │  │            │                 │  │   │
-│  │  │  └────────────┘  └────────────┘  └────────────┘                 │  │   │
-│  │  └──────────────────────────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Record Transaction                                    │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  Record      │  │  Update      │  │  Calculate   │  │  Update  │  │   │
-│  │  │  Check In    │  │  Check Out   │  │  Work Hours  │  │  Payroll │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                                                                     │
-│           ▼                                                                     │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Generate Notifications                                │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  Send Email  │  │  Send SMS    │  │  Push        │  │  Update  │  │   │
-│  │  │  Notification│  │  Notification│  │  Notification│  │  Dashboard│  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│                                                                                 │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Employee
+    participant Camera as CSI Camera (nvarguscamerasrc)
+    participant Jetson as Argus-EdgeAI Core (Jetson AGX Orin)
+    participant DB as SQLite Attendance DB
+    participant GPIO as GPIO Controller (Pin 17, 20)
+    participant Broker as MQTT / Cloud Dashboard
+
+    Employee->>Camera: Enters camera field of view
+    Camera->>Jetson: Streams NV12 frames via NVMM pipeline
+    Note over Jetson: TensorRT 10 Face Detection & Alignment
+    Note over Jetson: 512-d Feature Extraction & Vector Search
+    Jetson->>DB: Query employee record & check last check-in status
+    alt Employee Verified (Match >= 0.70)
+        Jetson->>DB: Record attendance transaction (Timestamp, Status: IN)
+        Jetson->>GPIO: Pulse GPIO 20 (Unlock Door Relay) & GPIO 17 (Green LED)
+        Jetson->>Broker: Publish MQTT event (edge_ai/attendance)
+    else Unknown Face / Restricted Access
+        Jetson->>GPIO: Trigger GPIO 18 (Alert LED) & GPIO 19 (Buzzer)
+        Jetson->>Broker: Publish Security Alert (edge_ai/alerts)
+    end
 ```
 
 ### 4. Hardware Communication Flow
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                    HARDWARE COMMUNICATION FLOW                                 │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Application Layer                                    │   │
-│  │  ┌──────────────────────────────────────────────────────────────────┐  │   │
-│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────┐  │  │   │
-│  │  │  │  Camera    │  │  GPIO      │  │  SPI       │  │  UART    │  │  │   │
-│  │  │  │  Control   │  │  Control   │  │  Comm      │  │  Comm    │  │  │   │
-│  │  │  └────────────┘  └────────────┘  └────────────┘  └──────────┘  │  │   │
-│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────┐  │  │   │
-│  │  │  │  I2C       │  │  PWM       │  │  Storage   │  │  Audio   │  │  │   │
-│  │  │  │  Comm      │  │  Control   │  │  Control   │  │  Control  │  │  │   │
-│  │  │  └────────────┘  └────────────┘  └────────────┘  └──────────┘  │  │   │
-│  │  └──────────────────────────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                  │                  │                              │
-│           ▼                  ▼                  ▼                              │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Driver Interface Layer                               │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  Camera      │  │  GPIO        │  │  SPI         │  │  UART    │  │   │
-│  │  │  Driver      │  │  Driver      │  │  Driver      │  │  Driver  │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  I2C         │  │  PWM         │  │  Storage     │  │  Audio   │  │   │
-│  │  │  Driver      │  │  Driver      │  │  Driver      │  │  Driver  │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                  │                  │                              │
-│           ▼                  ▼                  ▼                              │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    System Interface Layer                              │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  V4L2        │  │  Sysfs       │  │  /dev/spi*   │  │  /dev/   │  │   │
-│  │  │  (Video)     │  │  (GPIO)      │  │              │  │  tty*    │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │   │
-│  │  │  /dev/i2c*   │  │  /sys/class/ │  │  /dev/sd*    │  │  ALSA    │  │   │
-│  │  │              │  │  pwm*        │  │              │  │  (Audio) │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                  │                  │                              │
-│           ▼                  ▼                  ▼                              │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Linux Kernel                                         │   │
-│  │  ┌──────────────────────────────────────────────────────────────────┐  │   │
-│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────┐  │  │   │
-│  │  │  │  CSI       │  │  GPIO      │  │  SPI       │  │  UART    │  │  │   │
-│  │  │  │  Controller│  │  Controller│  │  Controller│  │  Controller│  │  │   │
-│  │  │  └────────────┘  └────────────┘  └────────────┘  └──────────┘  │  │   │
-│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌──────────┐  │  │   │
-│  │  │  │  I2C       │  │  PWM       │  │  Storage   │  │  Audio   │  │  │   │
-│  │  │  │  Controller│  │  Controller│  │  Controller│  │  Controller│  │  │   │
-│  │  │  └────────────┘  └────────────┘  └────────────┘  └──────────┘  │  │   │
-│  │  └──────────────────────────────────────────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                  │                  │                              │
-│           ▼                  ▼                  ▼                              │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                    Hardware Peripherals                                 │   │
-│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐       │   │
-│  │  │  Camera    │  │  GPIO      │  │  SPI       │  │  UART      │       │   │
-│  │  │  Module    │  │  Pins      │  │  Devices   │  │  Devices   │       │   │
-│  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘       │   │
-│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐       │   │
-│  │  │  I2C       │  │  PWM       │  │  Storage   │  │  Audio     │       │   │
-│  │  │  Devices   │  │  Devices   │  │  Devices   │  │  Devices   │       │   │
-│  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘       │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│                                                                                 │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    classDef app fill:#2B6CB0,stroke:#2C5282,color:#fff;
+    classDef drv fill:#2F855A,stroke:#22543D,color:#fff;
+    classDef sys fill:#C05621,stroke:#7B341E,color:#fff;
+    classDef hw fill:#4A5568,stroke:#2D3748,color:#fff;
+
+    subgraph APP ["Application Control Layer"]
+        C_CTRL["Camera Control"]:::app
+        G_CTRL["GPIO / Lock Control"]:::app
+        S_CTRL["SPI Telemetry"]:::app
+        U_CTRL["UART Serial Comm"]:::app
+        I_CTRL["I2C Sensor Read"]:::app
+        A_CTRL["Audio Processor"]:::app
+    end
+
+    subgraph DRV ["C++ Driver Interface (HAL)"]
+        D_CAM["CameraDriver (GStreamer)"]:::drv
+        D_GPIO["GPIODriver (PWM & Sysfs)"]:::drv
+        D_SPI["SPIDriver"]:::drv
+        D_UART["UARTDriver (Async)"]:::drv
+        D_I2C["I2CDriver (SMBus)"]:::drv
+        D_MIC["MicrophoneDriver (ALSA)"]:::drv
+    end
+
+    subgraph SYS ["Linux Kernel & Character Devices (L4T 36.4.7)"]
+        K_CAM["/dev/video0 (nvarguscamerasrc)"]:::sys
+        K_GPIO["/sys/class/gpio & PWM"]:::sys
+        K_SPI["/dev/spidev0.0"]:::sys
+        K_UART["/dev/ttyTHS1"]:::sys
+        K_I2C["/dev/i2c-1"]:::sys
+        K_ALSA["ALSA PCM Interface"]:::sys
+    end
+
+    subgraph HW ["AGX Orin Hardware Peripherals"]
+        H_CAM["MIPI CSI Camera (IMX219/AR0234)"]:::hw
+        H_PINS["40-Pin Header (Relays & LEDs)"]:::hw
+        H_SPI["SPI External Devices"]:::hw
+        H_UART["External Serial Controllers"]:::hw
+        H_I2C["I2C Sensors (BME280/MPU6050)"]:::hw
+        H_MIC["USB / I2S Microphone Array"]:::hw
+    end
+
+    APP ==> DRV
+    DRV ==> SYS
+    SYS ==> HW
 ```
 
 ### 5. Data Flow Diagram
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                         DATA FLOW DIAGRAM                                      │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                         Input Sources                                   │   │
-│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐       │   │
-│  │  │  Camera    │  │  Micro-    │  │  GPIO      │  │  Serial    │       │   │
-│  │  │  Feed      │  │  phone     │  │  Sensors   │  │  Input     │       │   │
-│  │  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘       │   │
-│  └────────┼───────────────┼───────────────┼───────────────┼────────────────┘   │
-│           │               │               │               │                    │
-│           ▼               ▼               ▼               ▼                    │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                      Processing Pipeline                               │   │
-│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐       │   │
-│  │  │  Raw       │  │  AI        │  │  Decision  │  │  Action    │       │   │
-│  │  │  Data      │→│  Inference │→│  Engine    │→│  Processor │       │   │
-│  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘       │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│           │                  │                  │                              │
-│           ▼                  ▼                  ▼                              │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                         Output Destinations                             │   │
-│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐       │   │
-│  │  │  Database  │  │  File      │  │  Cache     │  │  Backup    │       │   │
-│  │  │  (SQLite)  │  │  System    │  │  (Memory)  │  │  Storage   │       │   │
-│  │  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘       │   │
-│  └────────┼───────────────┼───────────────┼───────────────┼────────────────┘   │
-│           │               │               │               │                    │
-│           ▼               ▼               ▼               ▼                    │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                      Communication Channels                            │   │
-│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐       │   │
-│  │  │  MQTT      │  │  WebSocket │  │  REST API  │  │  TCP/IP    │       │   │
-│  │  │  Publish   │  │  Broadcast │  │  Response  │  │  Stream    │       │   │
-│  │  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘       │   │
-│  └────────┼───────────────┼───────────────┼───────────────┼────────────────┘   │
-│           │               │               │               │                    │
-│           ▼               ▼               ▼               ▼                    │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │                         External Systems                               │   │
-│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  ┌────────────┐       │   │
-│  │  │  Dashboard │  │  Mobile    │  │  Cloud     │  │  3rd Party │       │   │
-│  │  │  (Web)     │  │  App       │  │  Services  │  │  Systems   │       │   │
-│  │  └────────────┘  └────────────┘  └────────────┘  └────────────┘       │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│                                                                                 │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    classDef in fill:#2B6CB0,color:#fff;
+    classDef proc fill:#22543D,color:#fff;
+    classDef store fill:#744210,color:#fff;
+    classDef out fill:#4A5568,color:#fff;
+
+    subgraph INPUT ["Input Telemetry"]
+        CAM_FEED["CSI/USB Camera Stream"]:::in
+        MIC_FEED["Microphone Audio Stream"]:::in
+        SENS_FEED["GPIO & Serial Sensors"]:::in
+    end
+
+    subgraph PIPELINE ["Edge AI Processing (Jetson Orin)"]
+        direction TB
+        P_RAW["Raw Data Ingestion"]:::proc
+        P_AI["TensorRT 10 Deep Learning Inference"]:::proc
+        P_DEC["Access Control & Decision Engine"]:::proc
+        P_ACT["Action Dispatcher"]:::proc
+        P_RAW --> P_AI --> P_DEC --> P_ACT
+    end
+
+    subgraph DEST ["Storage & Cache"]
+        D_SQL[(SQLite Database)]:::store
+        D_FS[("File System (Images/Logs)")]:::store
+        D_MEM[("In-Memory State Cache")]:::store
+    end
+
+    subgraph COMM ["Network Channels"]
+        C_MQTT["MQTT Broker (Port 1883)"]:::out
+        C_WS["WebSocket Server (Port 8080)"]:::out
+        C_REST["REST API (Port 8000)"]:::out
+    end
+
+    subgraph EXT ["Clients & Enterprise"]
+        DASH["Web Monitoring Dashboard"]
+        MOBILE["Mobile App Alerts"]
+        CLOUD["Enterprise Cloud Server"]
+    end
+
+    INPUT ==> PIPELINE
+    PIPELINE ==> DEST
+    PIPELINE ==> COMM
+    COMM ==> EXT
 ```
 
 ---
@@ -622,34 +433,28 @@ The **NVIDIA Jetson AGX Orin Edge AI System** is a comprehensive, production-rea
 
 ##  Hardware Requirements
 
-### Minimum Requirements
+### Target Hardware Specifications
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                         HARDWARE REQUIREMENTS                               │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  Component          │ Specification (Target Hardware: AGX Orin)             │
-│  ──────────────────────────────────────────────────────────────────────────  │
-│  Board              │ NVIDIA Jetson AGX Orin Developer Kit (p3701-0005)    │
-│  Processor          │ 12-core ARM Cortex-A78AE v8.2 64-bit CPU             │
-│  GPU                │ NVIDIA Ampere (2048 CUDA cores, 64 Tensor cores)     │
-│  Memory             │ 64GB 256-bit LPDDR5 (204.8 GB/s)                     │
-│  Storage            │ 64GB eMMC 5.1 + NVMe SSD (PCIe Gen4)                │
-│  Power Mode         │ MODE_50W (Configurable 15W - 60W)                    │
-│  Camera             │ CSI Camera (nvarguscamerasrc) / USB UVC Camera       │
-│  Microphone         │ USB / I2S microphone (ALSA)                          │
-│  Network            │ Gigabit Ethernet / Wi-Fi                             │
-│  OS / L4T           │ Ubuntu 22.04 LTS (JetPack 6.2.1 / L4T 36.4.7)        │
-│                                                                             │
-│  Recommended:                                                               │
-│  • NVMe SSD (512GB+) for data storage                                     │
-│  • USB 3.0 Camera for high FPS                                           │
-│  • HDMI Display for debugging                                            │
-│  • Active Cooling for sustained performance                              │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+| Component | Specification (Target Hardware: Jetson AGX Orin 64GB) |
+| :--- | :--- |
+| **Developer Kit** | NVIDIA Jetson AGX Orin Developer Kit (`p3701-0005`) |
+| **CPU Architecture** | 12-core ARM Cortex-A78AE v8.2 64-bit CPU (up to 2.2 GHz) |
+| **GPU Engine** | NVIDIA Ampere (2048 CUDA Cores, 64 Tensor Cores, `sm_87`) |
+| **AI Inference TOPS**| Up to 275 TOPS (INT8) compute capability |
+| **System Memory** | 64GB 256-bit LPDDR5 (204.8 GB/s bandwidth) |
+| **Storage** | 64GB eMMC 5.1 + M.2 Key-M NVMe PCIe Gen4 SSD slot |
+| **Power Profile** | `MODE_50W` (Configurable 15W - 60W via `nvpmodel`) |
+| **Camera Bus** | 16-lane MIPI CSI-2 connector (`nvarguscamerasrc` / V4L2) |
+| **Audio Interface** | I2S / USB Microphone with ALSA driver support |
+| **Network** | 10 Gigabit Ethernet RJ45 + M.2 Key-E Wi-Fi / BT |
+| **Operating System** | Ubuntu 22.04 LTS Jammy (Kernel `5.15.148-tegra`) |
+| **L4T / JetPack** | **JetPack 6.2.1** `[L4T 36.4.7]` |
+
+> [!TIP]
+> **Recommended Production Hardware:**
+> - High-speed NVMe SSD (512GB+) mounted at `/var/edge_ai` for facial embeddings and continuous video buffer.
+> - High-resolution MIPI-CSI global-shutter camera (e.g. Arducam AR0234 or Sony IMX477) for high-speed tracking.
+> - Active thermal cooling fan module for sustained 50W/60W AI inference workloads.
 
 ### Supported Cameras
 
